@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .income-color {
+            color: #10b981;
+        }
+        .expense-color {
+            color: #ef4444;
+        }
+        .savings-color {
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-wallet text-3xl"></i>
+                    <h1 class="text-2xl font-bold">Personal Finance Tracker</h1>
+                </div>
+                <div class="text-sm">
+                    <span id="current-date" class="bg-white/20 px-3 py-1 rounded-full"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600">Total Income</p>
+                        <h2 class="text-3xl font-bold income-color" id="total-income">$0.00</h2>
+                    </div>
+                    <i class="fas fa-money-bill-wave income-color text-2xl"></i>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600">Total Expenses</p>
+                        <h2 class="text-3xl font-bold expense-color" id="total-expenses">$0.00</h2>
+                    </div>
+                    <i class="fas fa-shopping-cart expense-color text-2xl"></i>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600">Monthly Savings</p>
+                        <h2 class="text-3xl font-bold savings-color" id="total-savings">$0.00</h2>
+                    </div>
+                    <i class="fas fa-piggy-bank savings-color text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Input Forms -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Add Income Form -->
+                <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-plus-circle income-color mr-2"></i>Add Income
+                    </h3>
+                    <form id="income-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                            <input type="date" id="income-date" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                            <input type="number" id="income-amount" step="0.01" min="0" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                   placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                            <select id="income-category" required 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select category</option>
+                                <option value="Salary">Salary</option>
+                                <option value="Bonus">Bonus</option>
+                                <option value="Investment">Investment</option>
+                                <option value="Freelance">Freelance</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <input type="text" id="income-description" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                   placeholder="Brief description">
+                        </div>
+                        <button type="submit" 
+                                class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-200">
+                            <i class="fas fa-plus mr-2"></i>Add Income
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Add Expense Form -->
+                <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-minus-circle expense-color mr-2"></i>Add Expense
+                    </h3>
+                    <form id="expense-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                            <input type="date" id="expense-date" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                            <input type="number" id="expense-amount" step="0.01" min="0" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                   placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                            <select id="expense-category" required 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select category</option>
+                                <option value="Food">Food & Dining</option>
+                                <option value="Housing">Housing & Rent</option>
+                                <option value="Transport">Transportation</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Shopping">Shopping</option>
+                                <option value="Utilities">Utilities</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <input type="text" id="expense-description" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                   placeholder="Brief description">
+                        </div>
+                        <button type="submit" 
+                                class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition duration-200">
+                            <i class="fas fa-plus mr-2"></i>Add Expense
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column - Charts and Reports -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Charts Section -->
+                <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-chart-bar text-blue-500 mr-2"></i>Financial Overview
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <canvas id="income-expense-chart"></canvas>
+                        </div>
+                        <div>
+                            <canvas id="category-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-file-alt text-purple-500 mr-2"></i>Financial Reports
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-700 mb-2">Income Analysis</h4>
+                            <div id="income-report" class="text-sm text-gray-600">
+                                <p>No income data available</p>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-700 mb-2">Expense Analysis</h4>
+                            <div id="expense-report" class="text-sm text-gray-600">
+                                <p>No expense data available</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-700 mb-2">Savings Summary</h4>
+                        <div id="savings-report" class="text-sm text-blue-600">
+                            <p>No savings data available</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction History -->
+                <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-history text-green-500 mr-2"></i>Recent Transactions
+                    </h3>
+                    <div id="transaction-list" class="space-y-3">
+                        <p class="text-gray-500 text-center py-4">No transactions yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Smart Tips Modal -->
+    <div id="tips-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl p-6 max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">
+                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>Smart Tips
+                </h3>
+                <button onclick="closeTips()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="tips-content" class="text-gray-700">
+                <p>Add some transactions to get personalized financial tips!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>© 2024 Personal Finance Tracker. All rights reserved.</p>
+            <p class="text-gray-400 text-sm mt-2">Track your finances, secure your future</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize data
+        let finances = {
+            incomes: [],
+            expenses: []
+        };
+
+        // Chart instances
+        let incomeExpenseChart = null;
+        let categoryChart = null;
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            const now = new Date();
+            document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            // Set default date to today
+            const today = now.toISOString().split('T')[0];
+            document.getElementById('income-date').value = today;
+            document.getElementById('expense-date').value = today;
+
+            // Load data from localStorage
+            loadData();
+            
+            // Initialize charts
+            initCharts();
+            
+            // Update UI
+            updateUI();
+
+            // Set up form event listeners
+            document.getElementById('income-form').addEventListener('submit', handleIncomeSubmit);
+            document.getElementById('expense-form').addEventListener('submit', handleExpenseSubmit);
+        });
+
+        // Load data from localStorage
+        function loadData() {
+            const savedData = localStorage.getItem('financeData');
+            if (savedData) {
+                finances = JSON.parse(savedData);
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('financeData', JSON.stringify(finances));
+        }
+
+        // Handle income form submission
+        function handleIncomeSubmit(e) {
+            e.preventDefault();
+            
+            const income = {
+                id: Date.now(),
+                date: document.getElementById('income-date').value,
+                amount: parseFloat(document.getElementById('income-amount').value),
+                category: document.getElementById('income-category').value,
+                description: document.getElementById('income-description').value || 'No description',
+                type: 'income'
+            };
+
+            finances.incomes.push(income);
+            saveData();
+            updateUI();
+            
+            // Reset form
+            document.getElementById('income-form').reset();
+            document.getElementById('income-date').value = new Date().toISOString().split('T')[0];
+            
+            // Show success message
+            showNotification('Income added successfully!', 'success');
+        }
+
+        // Handle expense form submission
+        function handleExpenseSubmit(e) {
+            e.preventDefault();
+            
+            const expense = {
+                id: Date.now(),
+                date: document.getElementById('expense-date').value,
+                amount: parseFloat(document.getElementById('expense-amount').value),
+                category: document.getElementById('expense-category').value,
+                description: document.getElementById('expense-description').value || 'No description',
+                type: 'expense'
+            };
+
+            finances.expenses.push(expense);
+            saveData();
+            updateUI();
+            
+            // Reset form
+            document.getElementById('expense-form').reset();
+            document.getElementById('expense-date').value = new Date().toISOString().split('T')[0];
+            
+            // Show success message
+            showNotification('Expense added successfully!', 'success');
+        }
+
+        // Update all UI elements
+        function updateUI() {
+            updateSummary();
+            updateCharts();
+            updateReports();
+            updateTransactionList();
+            checkForSmartTips();
+        }
+
+        // Update summary cards
+        function updateSummary() {
+            const totalIncome = finances.incomes.reduce((sum, income) => sum + income.amount, 0);
+            const totalExpenses = finances.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            const totalSavings = totalIncome - totalExpenses;
+
+            document.getElementById('total-income').textContent = `$${totalIncome.toFixed(2)}`;
+            document.getElementById('total-expenses').textContent = `$${totalExpenses.toFixed(2)}`;
+            document.getElementById('total-savings').textContent = `$${totalSavings.toFixed(2)}`;
+        }
+
+        // Initialize charts
+        function initCharts() {
+            const incomeExpenseCtx = document.getElementById('income-expense-chart').getContext('2d');
+            incomeExpenseChart = new Chart(incomeExpenseCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Income', 'Expenses', 'Savings'],
+                    datasets: [{
+                        label: 'Amount ($)',
+                        data: [0, 0, 0],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(
